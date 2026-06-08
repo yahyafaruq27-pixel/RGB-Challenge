@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 RGB Challenge - Master of Digital Color</title>
+
+    <!-- Meta Tags for SEO -->
+    <meta name="description"
+        content="Mainkan RGB Challenge, game interaktif seru untuk mempelajari perpaduan warna digital Red, Green, Blue (RGB) dengan antarmuka modern, efek suara dinamis, dan tantangan menarik.">
+    <meta name="keywords" content="rgb, game warna, belajar rgb, digital color, game edukasi, html5 game">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 25, 40, 0.65);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+
+            --red-color: #f87171;
+            --red-glow: rgba(248, 113, 113, 0.4);
+            --green-color: #4ade80;
+            --green-glow: rgba(74, 222, 128, 0.4);
+            --blue-color: #60a5fa;
+            --blue-glow: rgba(96, 165, 250, 0.4);
+
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --primary-glow: rgba(168, 85, 247, 0.35);
+            --success-color: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --error-color: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.95) 0px, var(--bg-color) 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Confetti Canvas overlay */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        header {
+            width: 100%;
+            max-width: 850px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 10px 0;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.6em;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.2em;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .icon-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Container & Glassmorphism design */
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 850px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            margin-bottom: 25px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mode Selector */
+        .mode-selector {
+            display: flex;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 6px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.95em;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .mode-tab.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Dashboard HUD */
+        .hud {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .hud-item {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hud-label {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .hud-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6em;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .hud-value.glow-purple {
+            color: #c084fc;
+            text-shadow: 0 0 10px rgba(192, 132, 252, 0.4);
+        }
+
+        .hud-value.glow-blue {
+            color: #60a5fa;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.4);
+        }
+
+        /* Notification / Feedback Banner */
+        .toast {
+            padding: 15px 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-align: center;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid transparent;
+            animation: slideDown 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            display: flex;
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .toast.error {
+            display: flex;
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.25);
+            color: #f87171;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+        }
+
+        /* Game Layout wrapper */
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 35px;
+        }
+
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .hud {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hud-item:last-child {
+                grid-column: span 2;
+            }
+        }
+
+        /* Displays (Colors & Challenge targets) */
+        .interactive-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-card-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-card-title {
+            font-size: 0.8em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .visual-swatch {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-width: 240px;
+            border-radius: 24px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4), 0 10px 25px rgba(0, 0, 0, 0.35);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        .visual-swatch:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Comparison Split Overlay */
+        .split-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9em;
+            text-align: center;
+            font-weight: bold;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        /* Controls Section */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group-title {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: var(--text-primary);
+            border-left: 3px solid #a855f7;
+            padding-left: 10px;
+            margin-bottom: 5px;
+        }
+
+        /* Custom RGB Slider */
+        .slider-box {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.3s;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+
+        .slider-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-red {
+            background: var(--red-color);
+            box-shadow: 0 0 8px var(--red-glow);
+        }
+
+        .dot-green {
+            background: var(--green-color);
+            box-shadow: 0 0 8px var(--green-glow);
+        }
+
+        .dot-blue {
+            background: var(--blue-color);
+            box-shadow: 0 0 8px var(--blue-glow);
+        }
+
+        .slider-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05em;
+            font-weight: 700;
+        }
+
+        .slider-val.r-val {
+            color: var(--red-color);
+        }
+
+        .slider-val.g-val {
+            color: var(--green-color);
+        }
+
+        .slider-val.b-val {
+            color: var(--blue-color);
+        }
+
+        /* Custom Webkit Range Input Styling */
+        input[type="range"].rgb-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+            transition: background 0.3s;
+        }
+
+        /* Tracks coloring */
+        input[type="range"].rgb-slider#slideRed {
+            background: linear-gradient(to right, #111827, #ef4444);
+        }
+
+        input[type="range"].rgb-slider#slideGreen {
+            background: linear-gradient(to right, #111827, #22c55e);
+        }
+
+        input[type="range"].rgb-slider#slideBlue {
+            background: linear-gradient(to right, #111827, #3b82f6);
+        }
+
+        input[type="range"].rgb-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"].rgb-slider#slideRed::-webkit-slider-thumb {
+            background: var(--red-color);
+            box-shadow: 0 0 10px var(--red-glow);
+        }
+
+        input[type="range"].rgb-slider#slideGreen::-webkit-slider-thumb {
+            background: var(--green-color);
+            box-shadow: 0 0 10px var(--green-glow);
+        }
+
+        input[type="range"].rgb-slider#slideBlue::-webkit-slider-thumb {
+            background: var(--blue-color);
+            box-shadow: 0 0 10px var(--blue-glow);
+        }
+
+        input[type="range"].rgb-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        /* Action buttons */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-row button {
+            flex: 1;
+        }
+
+        .action-btn {
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.95em;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.13);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* Shake animation for error state */
+        .shake {
+            animation: shakeAnim 0.4s ease-in-out;
+        }
+
+        @keyframes shakeAnim {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-6px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(6px);
+            }
+        }
+
+        /* Trivia Mode Styles */
+        .trivia-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            width: 100%;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .trivia-code {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #c084fc 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .trivia-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .trivia-option {
+            aspect-ratio: 1.4 / 1;
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .trivia-option:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        .trivia-option-label {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            padding: 8px;
+            font-weight: 700;
+            font-size: 0.85em;
+            letter-spacing: 1.5px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+        }
+
+        .trivia-option.correct {
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .trivia-option.wrong {
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            opacity: 0.6;
+        }
+
+        /* History panel */
+        .history-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 850px;
+            padding: 25px 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .history-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom scrollbar */
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 3px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+
+        .history-item {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+
+        .history-swatches {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .history-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-label {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin-top: 1px;
+        }
+
+        .history-details {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .history-accuracy {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 65px;
+        }
+
+        .accuracy-high {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .accuracy-mid {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .accuracy-low {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalScale {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .modal-body p strong {
+            color: #ffffff;
+        }
+
+        .color-mix-sandbox {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .sandbox-swatch {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sandbox-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .sandbox-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85em;
+            color: var(--text-primary);
+        }
+
+        .sandbox-checkbox-label input {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.2);
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Empty state styling */
+        .empty-history {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 20px 0;
+        }
+
+        /* Math Clue Panel styling */
+        .math-clue-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 16px;
+            width: 100%;
+            max-width: 240px;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        .math-clue-title {
+            font-size: 0.78em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+            text-align: center;
+        }
+
+        .math-clue-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 0.9em;
+        }
+
+        .math-clue-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .math-clue-eq {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.07);
+            padding: 4px 12px;
+            border-radius: 10px;
+            text-align: right;
+            flex-grow: 1;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <header>
+        <div class="logo">
+            <span>🎨</span> RGB Challenge
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openModal()" title="Panduan Belajar">❔</button>
+        </div>
+    </header>
+
+    <!-- Main Game Box -->
+    <main class="main-card" id="gameCard">
+        <!-- Game Mode Selection -->
+        <nav class="mode-selector">
+            <button class="mode-tab active" id="tabSlider" onclick="switchMode('slider')">🎚️ Tebak Warna
+                (Slider)</button>
+            <button class="mode-tab" id="tabTrivia" onclick="switchMode('trivia')">🎯 Pilihan Ganda (Trivia)</button>
+        </nav>
+
+        <!-- Stats Dashboard -->
+        <section class="hud" aria-label="Game HUD">
+            <div class="hud-item">
+                <span class="hud-label">Skor Anda</span>
+                <span class="hud-value glow-purple" id="score">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Skor Tertinggi</span>
+                <span class="hud-value" id="highScore">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Level</span>
+                <span class="hud-value glow-blue" id="level">1</span>
+            </div>
+        </section>
+
+        <!-- Notification Banner -->
+        <div class="toast" id="feedbackBanner" role="status" aria-live="polite">
+            <span id="bannerIcon"></span>
+            <span id="bannerText"></span>
+        </div>
+
+        <!-- Gameplay grid container -->
+        <div class="game-grid">
+
+            <!-- Target & User Color Swatch Display (Dynamic based on Mode) -->
+            <section class="interactive-panel" aria-label="Area Visual Warna">
+
+                <!-- Tab Slider Content Visual -->
+                <div class="color-card-wrapper" id="sliderVisualWrapper">
+                    <span class="color-card-title">Perbandingan Warna</span>
+                    <div class="visual-swatch" id="colorDisplaySlider" style="background-color: rgb(0,0,0);">
+                        <!-- Left-Right Split Overlay comparing Target vs User -->
+                        <div style="position: absolute; top:0; left:0; width: 50%; height:100%; border-right: 1px solid rgba(255,255,255,0.2);"
+                            id="splitTarget" title="Warna Target"></div>
+                        <div style="position: absolute; top:0; right:0; width: 50%; height:100%;" id="splitUser"
+                            title="Warna Anda"></div>
+                        <div class="split-indicator">
+                            TARGET vs ANDA
+                        </div>
+                    </div>
+                    <!-- Panel Petunjuk Matematika -->
+                    <div class="math-clue-box" id="mathClueBox">
+                        <div class="math-clue-title">🔢 Petunjuk Matematika (Target)</div>
+                        <div class="math-clue-row">
+                            <span class="math-clue-label"><span class="dot dot-red"></span>Red (R)</span>
+                            <span class="math-clue-eq" id="mathClueR">? = ?</span>
+                        </div>
+                        <div class="math-clue-row">
+                            <span class="math-clue-label"><span class="dot dot-green"></span>Green (G)</span>
+                            <span class="math-clue-eq" id="mathClueG">? = ?</span>
+                        </div>
+                        <div class="math-clue-row">
+                            <span class="math-clue-label"><span class="dot dot-blue"></span>Blue (B)</span>
+                            <span class="math-clue-eq" id="mathClueB">? = ?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Trivia Content Visual -->
+                <div class="color-card-wrapper" id="triviaVisualWrapper" style="display: none; width: 100%;">
+                    <div class="trivia-display">
+                        <span class="color-card-title">Tebak Warna Dari RGB:</span>
+                        <div class="trivia-code" id="triviaRGBCode">rgb(255, 255, 255)</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Inputs / Sliders / Buttons (Right column) -->
+            <section class="controls-panel" aria-label="Kontrol Gameplay">
+
+                <!-- SLIDER MODE CONTROLS -->
+                <div id="sliderControls" class="controls-wrapper">
+                    <h3 class="control-group-title">Geser Untuk Mencocokkan</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                        <!-- Red Slider -->
+                        <div class="slider-box">
+                            <div class="slider-header">
+                                <span class="slider-label"><span class="dot dot-red"></span>Red (Merah)</span>
+                                <span class="slider-val r-val" id="valRed">0</span>
+                            </div>
+                            <input type="range" class="rgb-slider" id="slideRed" min="0" max="255" value="0"
+                                oninput="updateUserColor(true)">
+                        </div>
+
+                        <!-- Green Slider -->
+                        <div class="slider-box">
+                            <div class="slider-header">
+                                <span class="slider-label"><span class="dot dot-green"></span>Green (Hijau)</span>
+                                <span class="slider-val g-val" id="valGreen">0</span>
+                            </div>
+                            <input type="range" class="rgb-slider" id="slideGreen" min="0" max="255" value="0"
+                                oninput="updateUserColor(true)">
+                        </div>
+
+                        <!-- Blue Slider -->
+                        <div class="slider-box">
+                            <div class="slider-header">
+                                <span class="slider-label"><span class="dot dot-blue"></span>Blue (Biru)</span>
+                                <span class="slider-val b-val" id="valBlue">0</span>
+                            </div>
+                            <input type="range" class="rgb-slider" id="slideBlue" min="0" max="255" value="0"
+                                oninput="updateUserColor(true)">
+                        </div>
+                    </div>
+
+                    <!-- Slider Action Buttons -->
+                    <div class="btn-row">
+                        <button class="action-btn btn-primary" id="btnSubmitSlider" onclick="checkSliderMatch()">✅ Cek
+                            Akurasi</button>
+                        <button class="action-btn btn-secondary" id="btnNextSlider" onclick="nextLevel()" disabled>➡️
+                            Lanjut</button>
+                    </div>
+                </div>
+
+                <!-- TRIVIA MODE CONTROLS -->
+                <div id="triviaControls" class="controls-wrapper" style="display: none;">
+                    <h3 class="control-group-title">Pilih Warna Yang Cocok</h3>
+                    <div class="trivia-grid" style="margin-top: 15px;">
+                        <button class="trivia-option" id="opt0" onclick="chooseTriviaOption(0)">
+                            <div class="trivia-option-label">Opsi A</div>
+                        </button>
+                        <button class="trivia-option" id="opt1" onclick="chooseTriviaOption(1)">
+                            <div class="trivia-option-label">Opsi B</div>
+                        </button>
+                        <button class="trivia-option" id="opt2" onclick="chooseTriviaOption(2)">
+                            <div class="trivia-option-label">Opsi C</div>
+                        </button>
+                        <button class="trivia-option" id="opt3" onclick="chooseTriviaOption(3)">
+                            <div class="trivia-option-label">Opsi D</div>
+                        </button>
+                    </div>
+
+                    <!-- Trivia Action Buttons -->
+                    <div class="btn-row">
+                        <button class="action-btn btn-secondary" id="btnNextTrivia" onclick="nextLevel()"
+                            style="width: 100%;" disabled>➡️ Level Berikutnya</button>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Game Guess History Card -->
+    <section class="history-card" aria-label="Riwayat Permainan">
+        <h3 class="history-title">⏱️ Riwayat Tebakan Terakhir</h3>
+        <div class="history-list" id="historyLog">
+            <div class="empty-history">Belum ada tebakan di level ini. Ayo mulai bermain!</div>
+        </div>
+    </section>
+
+    <!-- Educational Info Modal Overlay -->
+    <div class="modal-overlay" id="infoModal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">📚 Mengenal Sistem Warna RGB</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>RGB</strong> adalah model warna aditif di mana cahaya warna <strong>Merah (Red)</strong>,
+                    <strong>Hijau (Green)</strong>, dan <strong>Biru (Blue)</strong> digabungkan dengan berbagai cara
+                    untuk mereproduksi susunan warna yang kaya di layar digital.
+                </p>
+
+                <p>Setiap komponen warna (channel) memiliki rentang nilai dari <strong>0</strong> (tidak ada cahaya)
+                    hingga <strong>255</strong> (kekuatan cahaya penuh). Ini berarti komputer dapat menghasilkan 16,7
+                    juta kombinasi warna unik!</p>
+
+                <p><strong>Rumus Campuran Warna Dasar:</strong></p>
+                <ul style="padding-left: 20px;">
+                    <li>Merah + Hijau = <strong>Kuning</strong> <code style="color: #fbbf24;">(255, 255, 0)</code></li>
+                    <li>Merah + Biru = <strong>Magenta</strong> <code style="color: #f472b6;">(255, 0, 255)</code></li>
+                    <li>Hijau + Biru = <strong>Cyan</strong> <code style="color: #22d3ee;">(0, 255, 255)</code></li>
+                    <li>Merah + Hijau + Biru = <strong>Putih</strong> <code
+                            style="color: #ffffff;">(255, 255, 255)</code></li>
+                    <li>Semua nilai nol = <strong>Hitam</strong> <code style="color: #94a3b8;">(0, 0, 0)</code></li>
+                </ul>
+
+                <!-- Sandbox playground inside modal -->
+                <div class="color-mix-sandbox">
+                    <span style="color: #ffffff; font-weight: 700; font-size: 0.9em;">🔬 Sandbox Pencampur Warna
+                        Aditif</span>
+                    <div class="sandbox-swatch" id="sandboxPreview" style="background-color: rgb(0,0,0);"></div>
+                    <div class="sandbox-controls">
+                        <label class="sandbox-checkbox-label">
+                            <input type="checkbox" id="sandRed" onchange="updateSandbox()">
+                            <span style="color: var(--red-color);">Red</span>
+                        </label>
+                        <label class="sandbox-checkbox-label">
+                            <input type="checkbox" id="sandGreen" onchange="updateSandbox()">
+                            <span style="color: var(--green-color);">Green</span>
+                        </label>
+                        <label class="sandbox-checkbox-label">
+                            <input type="checkbox" id="sandBlue" onchange="updateSandbox()">
+                            <span style="color: var(--blue-color);">Blue</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        RGB Challenge Web App &bull; Dibuat dengan presisi visual & edukasi interaktif
+    </footer>
+
+    <!-- Game Engine Logic Script -->
+    <script>
+        // Core Game State
+        let currentMode = 'slider'; // 'slider' or 'trivia'
+        let score = 0;
+        let highScore = parseInt(localStorage.getItem('rgb_high_score')) || 0;
+        let level = 1;
+
+        // Color variables
+        let targetR = 0, targetG = 0, targetB = 0;
+        let userR = 0, userG = 0, userB = 0;
+
+        // Trivia options colors
+        let triviaOptions = [];
+        let correctAnswerIndex = -1;
+        let answeredTrivia = false;
+
+        // Audio System State
+        let audioCtx = null;
+
+        // Confetti Engine Variables
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationId = null;
+
+        // --- Audio Engine (Synthesizer via Web Audio API) ---
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        const failAudio = new Audio('faaah.mp3');
+        const fail3Audio = new Audio('tf_nemesis.mp3'); // sound after 3 consecutive fails
+        const successAudio = new Audio('spiderman-meme-song.mp3'); // sound for correct answer
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const now = audioCtx.currentTime;
+
+                if (type === 'tick') {
+                    // Quick haptic slider slide sound
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.04);
+                    gainNode.gain.setValueAtTime(0.015, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                }
+                else if (type === 'success') {
+                    // Ascending chime
+                    playNote(523.25, now, 0.08); // C5
+                    playNote(659.25, now + 0.07, 0.08); // E5
+                    playNote(783.99, now + 0.14, 0.08); // G5
+                    playNote(1046.50, now + 0.21, 0.2); // C6
+                }
+                else if (type === 'perfect') {
+                    // Joyous cascade
+                    const scale = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+                    scale.forEach((freq, idx) => {
+                        playNote(freq, now + idx * 0.05, 0.08);
+                    });
+                }
+                else if (type === 'fail') {
+                    // Play fail sound using preloaded Audio object
+                    failAudio.currentTime = 0;
+                    failAudio.play().catch(e => console.warn('Fail sound playback error:', e));
+                }
+                else if (type === 'click') {
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    osc.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    osc.frequency.setValueAtTime(600, now);
+                    gainNode.gain.setValueAtTime(0.03, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                }
+            } catch (err) {
+                console.warn("Audio error ignored for compatibility", err);
+            }
+        }
+
+        function playNote(freq, startTime, duration) {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.frequency.setValueAtTime(freq, startTime);
+            gainNode.gain.setValueAtTime(0.07, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        // --- Confetti Particle Engine ---
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class ConfettiParticle {
+            constructor() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+                this.size = Math.random() * 8 + 5;
+                this.color = `hsl(${Math.random() * 360}, 90%, 60%)`;
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 10 + 4;
+                this.vx = Math.cos(angle) * velocity;
+                this.vy = Math.sin(angle) * velocity - 2; // Initial upward force
+                this.gravity = 0.3;
+                this.drag = 0.96;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 - 5;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.012 + 0.008;
+            }
+
+            update() {
+                this.vx *= this.drag;
+                this.vy *= this.drag;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rotation += this.rotationSpeed;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.alpha;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        function triggerConfetti() {
+            cancelAnimationFrame(animationId);
+            particles = [];
+            // Spawn particles above buttons
+            const rect = document.getElementById('gameCard').getBoundingClientRect();
+            const spawnX = rect.left + rect.width / 2;
+            const spawnY = rect.top + rect.height * 0.6;
+
+            for (let i = 0; i < 120; i++) {
+                const p = new ConfettiParticle();
+                p.x = spawnX + (Math.random() * 60 - 30);
+                p.y = spawnY + (Math.random() * 30 - 15);
+                particles.push(p);
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.alpha > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            if (particles.length > 0) {
+                animationId = requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        // --- Core Game Functions ---
+
+        // Reset all stats on load
+        function initGame() {
+            document.getElementById('highScore').textContent = highScore;
+            generateLevelChallenge();
+        }
+
+        function switchMode(mode) {
+            if (currentMode === mode) return;
+            playSound('click');
+            currentMode = mode;
+
+            // Toggle tab UI classes
+            document.getElementById('tabSlider').classList.toggle('active', mode === 'slider');
+            document.getElementById('tabTrivia').classList.toggle('active', mode === 'trivia');
+
+            // Toggle layouts
+            document.getElementById('sliderVisualWrapper').style.display = mode === 'slider' ? 'flex' : 'none';
+            document.getElementById('sliderControls').style.display = mode === 'slider' ? 'block' : 'none';
+
+            document.getElementById('triviaVisualWrapper').style.display = mode === 'trivia' ? 'flex' : 'none';
+            document.getElementById('triviaControls').style.display = mode === 'trivia' ? 'block' : 'none';
+
+            // Clear history and generate new challenge
+            clearFeedback();
+            document.getElementById('historyLog').innerHTML = `<div class="empty-history">Belum ada tebakan di level ini. Ayo mulai bermain!</div>`;
+            generateLevelChallenge();
+        }
+
+        function clearFeedback() {
+            const banner = document.getElementById('feedbackBanner');
+            banner.className = 'toast';
+            banner.style.display = 'none';
+        }
+
+        function showFeedback(text, isSuccess) {
+            const banner = document.getElementById('feedbackBanner');
+            const icon = document.getElementById('bannerIcon');
+            const txt = document.getElementById('bannerText');
+
+            banner.className = isSuccess ? 'toast success' : 'toast error';
+            icon.textContent = isSuccess ? '🎉' : '😅';
+            txt.textContent = text;
+            banner.style.display = 'flex';
+        }
+
+        // Generator petunjuk matematika interaktif untuk anak SD
+        function generateMathClue(value, level) {
+            const randomRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+            const isPrime = (num) => {
+                if (num <= 1) return false;
+                for (let i = 2; i <= Math.sqrt(num); i++) {
+                    if (num % i === 0) return false;
+                }
+                return true;
+            };
+
+            const getRandomFactor = (num, maxFactor = 15) => {
+                const factors = [];
+                for (let i = 2; i <= Math.min(num - 1, maxFactor); i++) {
+                    if (num % i === 0) {
+                        factors.push(i);
+                    }
+                }
+                if (factors.length === 0) return null;
+                return factors[Math.floor(Math.random() * factors.length)];
+            };
+
+            if (level <= 2) {
+                // Level 1-2: Penjumlahan & Pengurangan sederhana (1 langkah)
+                if (Math.random() < 0.5) {
+                    const a = randomRange(0, value);
+                    const b = value - a;
+                    return `${a} + ${b}`;
+                } else {
+                    const b = randomRange(10, 80);
+                    const a = value + b;
+                    return `${a} - ${b}`;
+                }
+            }
+
+            if (level <= 5) {
+                // Level 3-5: Perkalian sederhana, pembagian dasar, atau penjumlahan/pengurangan sedang
+                const type = randomRange(1, 4);
+                if (type === 1) {
+                    const a = randomRange(0, value);
+                    return `${a} + ${value - a}`;
+                } else if (type === 2) {
+                    const b = randomRange(50, 150);
+                    return `${value + b} - ${b}`;
+                } else if (type === 3) {
+                    if (value > 1 && !isPrime(value)) {
+                        const factor = getRandomFactor(value, 12);
+                        if (factor) {
+                            const other = value / factor;
+                            return `${other} × ${factor}`;
+                        }
+                    }
+                    // Fallback pembagian
+                    const b = randomRange(2, 4);
+                    return `${value * b} ÷ ${b}`;
+                } else {
+                    const b = randomRange(2, 5);
+                    return `${value * b} ÷ ${b}`;
+                }
+            }
+
+            if (level <= 8) {
+                // Level 6-8: Persamaan 2 langkah (misal: (a * b) + c atau (a / b) - c)
+                const opType = randomRange(1, 4);
+                if (opType === 1) {
+                    const c = randomRange(5, 40);
+                    const remainder = value - c;
+                    if (remainder > 1 && !isPrime(remainder)) {
+                        const factor = getRandomFactor(remainder, 10);
+                        if (factor) {
+                            return `(${remainder / factor} × ${factor}) + ${c}`;
+                        }
+                    }
+                    // Fallback
+                    const a = randomRange(10, 100);
+                    const b = randomRange(10, 100);
+                    const sum = a + b;
+                    const diff = sum - value;
+                    return diff >= 0 ? `(${a} + ${b}) - ${diff}` : `(${a} + ${b}) + ${Math.abs(diff)}`;
+                } else if (opType === 2) {
+                    const c = randomRange(5, 40);
+                    const targetSum = value + c;
+                    if (targetSum > 1 && !isPrime(targetSum)) {
+                        const factor = getRandomFactor(targetSum, 10);
+                        if (factor) {
+                            return `(${targetSum / factor} × ${factor}) - ${c}`;
+                        }
+                    }
+                    const b = randomRange(10, 60);
+                    const a = value + b;
+                    const cVal = randomRange(5, 30);
+                    return `(${a + cVal} - ${b}) - ${cVal}`;
+                } else if (opType === 3) {
+                    const b = randomRange(2, 4);
+                    const c = randomRange(5, Math.min(value - 1, 30));
+                    const remainder = value - c;
+                    if (remainder > 0) {
+                        return `(${remainder * b} ÷ ${b}) + ${c}`;
+                    }
+                    return `(${value * 2} ÷ 2) + 0`;
+                } else {
+                    const b = randomRange(2, 3);
+                    const c = randomRange(5, 30);
+                    const targetSum = value + c;
+                    return `(${targetSum * b} ÷ ${b}) - ${c}`;
+                }
+            }
+
+            // Level 9+: Lebih menantang (kombinasi 2 langkah kompleks)
+            const complexType = randomRange(1, 3);
+            if (complexType === 1 && value >= 20) {
+                const v1 = randomRange(10, value - 10);
+                const v2 = value - v1;
+                let part1 = '';
+                if (v1 > 1 && !isPrime(v1)) {
+                    const f1 = getRandomFactor(v1, 8);
+                    if (f1) part1 = `${v1 / f1} × ${f1}`;
+                }
+                if (!part1) {
+                    part1 = `${v1 * 2} ÷ 2`;
+                }
+                let part2 = '';
+                if (v2 > 1 && !isPrime(v2)) {
+                    const f2 = getRandomFactor(v2, 8);
+                    if (f2) part2 = `${v2 / f2} × ${f2}`;
+                }
+                if (!part2) {
+                    part2 = `${v2 * 2} ÷ 2`;
+                }
+                return `(${part1}) + (${part2})`;
+            } else if (complexType === 2 && value > 1 && !isPrime(value)) {
+                const factor = getRandomFactor(value, 6);
+                if (factor) {
+                    const other = value / factor;
+                    const b = randomRange(5, 20);
+                    const a = other + b;
+                    return `(${a} - ${b}) × ${factor}`;
+                }
+            } else if (complexType === 3) {
+                const c = randomRange(2, 3);
+                const targetSum = value * c;
+                const a = randomRange(10, targetSum - 10);
+                const b = targetSum - a;
+                return `(${a} + ${b}) ÷ ${c}`;
+            }
+
+            return `(${value * 2} ÷ 2) - 0`;
+        }
+
+        function generateLevelChallenge() {
+            // Generate a random color target
+            targetR = Math.floor(Math.random() * 256);
+            targetG = Math.floor(Math.random() * 256);
+            targetB = Math.floor(Math.random() * 256);
+
+            if (currentMode === 'slider') {
+                // Set target color visual swatch
+                document.getElementById('splitTarget').style.backgroundColor = `rgb(${targetR}, ${targetG}, ${targetB})`;
+
+                // Set petunjuk matematika target
+                document.getElementById('mathClueR').textContent = generateMathClue(targetR, level) + ' = ?';
+                document.getElementById('mathClueG').textContent = generateMathClue(targetG, level) + ' = ?';
+                document.getElementById('mathClueB').textContent = generateMathClue(targetB, level) + ' = ?';
+
+                // Reset user sliders & color
+                document.getElementById('slideRed').value = 0;
+                document.getElementById('slideGreen').value = 0;
+                document.getElementById('slideBlue').value = 0;
+                updateUserColor(false); // don't play click tick during target reset
+
+                // Enable inputs & buttons
+                document.getElementById('slideRed').disabled = false;
+                document.getElementById('slideGreen').disabled = false;
+                document.getElementById('slideBlue').disabled = false;
+                document.getElementById('btnSubmitSlider').disabled = false;
+                document.getElementById('btnNextSlider').disabled = true;
+            }
+            else if (currentMode === 'trivia') {
+                // Update Trivia prompt code display
+                document.getElementById('triviaRGBCode').textContent = `rgb(${targetR}, ${targetG}, ${targetB})`;
+                answeredTrivia = false;
+
+                // Make options - 1 correct option, 3 distractors
+                correctAnswerIndex = Math.floor(Math.random() * 4);
+                triviaOptions = [];
+
+                for (let i = 0; i < 4; i++) {
+                    if (i === correctAnswerIndex) {
+                        triviaOptions.push({ r: targetR, g: targetG, b: targetB });
+                    } else {
+                        // Generate wrong answers by perturbing the target color significantly
+                        let wrongR, wrongG, wrongB;
+                        let maxAttempts = 10;
+                        do {
+                            // Ensure distractor is visually distinct (at least a distance of 80 in color space)
+                            const shiftR = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 90) + 60);
+                            const shiftG = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 90) + 60);
+                            const shiftB = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 90) + 60);
+
+                            wrongR = Math.max(0, Math.min(255, targetR + shiftR));
+                            wrongG = Math.max(0, Math.min(255, targetG + shiftG));
+                            wrongB = Math.max(0, Math.min(255, targetB + shiftB));
+
+                            maxAttempts--;
+                        } while (
+                            Math.sqrt(Math.pow(wrongR - targetR, 2) + Math.pow(wrongG - targetG, 2) + Math.pow(wrongB - targetB, 2)) < 90
+                            && maxAttempts > 0
+                        );
+
+                        triviaOptions.push({ r: wrongR, g: wrongG, b: wrongB });
+                    }
+                }
+
+                // Render options swatches
+                for (let i = 0; i < 4; i++) {
+                    const optBtn = document.getElementById(`opt${i}`);
+                    optBtn.className = 'trivia-option';
+                    optBtn.style.backgroundColor = `rgb(${triviaOptions[i].r}, ${triviaOptions[i].g}, ${triviaOptions[i].b})`;
+                    optBtn.disabled = false;
+                }
+                document.getElementById('btnNextTrivia').disabled = true;
+            }
+        }
+
+        function updateUserColor(playSoundTick) {
+            userR = parseInt(document.getElementById('slideRed').value);
+            userG = parseInt(document.getElementById('slideGreen').value);
+            userB = parseInt(document.getElementById('slideBlue').value);
+
+            // Update user split swatch
+            document.getElementById('splitUser').style.backgroundColor = `rgb(${userR}, ${userG}, ${userB})`;
+
+            // Update numerical text indicators
+            document.getElementById('valRed').textContent = userR;
+            document.getElementById('valGreen').textContent = userG;
+            document.getElementById('valBlue').textContent = userB;
+
+            if (playSoundTick) {
+                playSound('tick');
+            }
+        }
+
+        // Calculate 3D Euclidean Color Match Accuracy
+        function calculateAccuracy(r1, g1, b1, r2, g2, b2) {
+            const distance = Math.sqrt(
+                Math.pow(r1 - r2, 2) +
+                Math.pow(g1 - g2, 2) +
+                Math.pow(b1 - b2, 2)
+            );
+            // Max distance in 3D RGB space is sqrt(255^2 * 3) ~ 441.673
+            const maxDistance = 441.67295593;
+            const accuracy = Math.max(0, 100 - (distance / maxDistance * 100));
+            return accuracy;
+        }
+
+        // --- Submit Slider Guess Action ---
+        function checkSliderMatch() {
+            const accuracy = calculateAccuracy(targetR, targetG, targetB, userR, userG, userB);
+            const accuracyRounded = accuracy.toFixed(1);
+
+            // Calculate score points gained
+            let pointsGained = 0;
+            let success = false;
+            let badge = '';
+
+            if (accuracy >= 98.5) {
+                pointsGained = 150;
+                success = true;
+                badge = 'Sempurna! 🎯';
+
+                successAudio.currentTime = 0;
+                successAudio.play().catch(e => console.warn('Success sound error:', e));
+                triggerConfetti();
+            } else if (accuracy >= 94) {
+                pointsGained = 100;
+                success = true;
+                badge = 'Luar Biasa! 🌟';
+                successAudio.currentTime = 0;
+                successAudio.play().catch(e => console.warn('Success sound error:', e));
+            } else if (accuracy >= 90) {
+                pointsGained = 60;
+                success = true;
+                badge = 'Bagus Sekali! 👍';
+                successAudio.currentTime = 0;
+                successAudio.play().catch(e => console.warn('Success sound error:', e));
+            } else {
+                pointsGained = 0;
+                badge = 'Coba Lagi! 😅';
+                playSound('fail');
+
+                // Increment failure streak
+                if (typeof window.failStreak === 'undefined') {
+                    window.failStreak = 0;
+                }
+                window.failStreak++;
+
+                // If three consecutive failures, play extra sound and show message
+                if (window.failStreak >= 3) {
+                    // Reset streak after triggering
+                    window.failStreak = 0;
+                    fail3Audio.currentTime = 0;
+                    fail3Audio.play().catch(e => console.warn('Fail3 sound error:', e));
+                    showFeedback('Gagal coba lagi! 🙁', false);
+                } else {
+                    // Shake game visual card to give sensory feedback
+                    const gameCard = document.getElementById('gameCard');
+                    gameCard.classList.add('shake');
+                    setTimeout(() => gameCard.classList.remove('shake'), 400);
+                }
+            }
+
+            // Update score
+            if (pointsGained > 0) {
+                score += pointsGained;
+                document.getElementById('score').textContent = score;
+
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('rgb_high_score', highScore);
+                    document.getElementById('highScore').textContent = highScore;
+                }
+
+                // Enable next level button, disable sliders
+                // Reset failure streak on success
+                window.failStreak = 0;
+                document.getElementById('slideGreen').disabled = true;
+                document.getElementById('slideBlue').disabled = true;
+                document.getElementById('btnSubmitSlider').disabled = true;
+                document.getElementById('btnNextSlider').disabled = false;
+
+                showFeedback(`${badge} Akurasi Anda: ${accuracyRounded}%. +${pointsGained} Poin!`, true);
+            } else {
+                showFeedback(`Akurasi Anda: ${accuracyRounded}%. Cocokkan minimal 70% untuk lulus level ini.`, false);
+            }
+
+            // Append to Guess History Log
+            addHistoryLog(
+                `rgb(${targetR}, ${targetG}, ${targetB})`,
+                `rgb(${userR}, ${userG}, ${userB})`,
+                accuracy,
+                pointsGained
+            );
+        }
+
+        // --- Choose Trivia Choice Action ---
+        function chooseTriviaOption(index) {
+            if (answeredTrivia) return;
+            answeredTrivia = true;
+
+            const selectedBtn = document.getElementById(`opt${index}`);
+            const correctBtn = document.getElementById(`opt${correctAnswerIndex}`);
+
+            // Disable all options
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`opt${i}`).disabled = true;
+            }
+
+            if (index === correctAnswerIndex) {
+                // Correct choice!
+                selectedBtn.classList.add('correct');
+                successAudio.currentTime = 0;
+                successAudio.play().catch(e => console.warn('Success sound error:', e));
+
+                const points = 100;
+                score += points;
+                document.getElementById('score').textContent = score;
+
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('rgb_high_score', highScore);
+                    document.getElementById('highScore').textContent = highScore;
+                }
+
+                showFeedback(`Benar! Itu warna dari rgb(${targetR}, ${targetG}, ${targetB}). +${points} Poin!`, true);
+
+                // Log history
+                addHistoryLog(
+                    `rgb(${targetR}, ${targetG}, ${targetB})`,
+                    `rgb(${triviaOptions[index].r}, ${triviaOptions[index].g}, ${triviaOptions[index].b})`,
+                    100,
+                    points
+                );
+            } else {
+                // Wrong choice!
+                selectedBtn.classList.add('wrong');
+                correctBtn.classList.add('correct');
+                playSound('fail');
+
+                // Shake game visual card
+                const gameCard = document.getElementById('gameCard');
+                gameCard.classList.add('shake');
+                setTimeout(() => gameCard.classList.remove('shake'), 400);
+
+                showFeedback(`Kurang Tepat! Pilihan yang benar ditandai dengan warna hijau.`, false);
+
+                // Log history
+                const incorrectAccuracy = calculateAccuracy(
+                    targetR, targetG, targetB,
+                    triviaOptions[index].r, triviaOptions[index].g, triviaOptions[index].b
+                );
+                addHistoryLog(
+                    `rgb(${targetR}, ${targetG}, ${targetB})`,
+                    `rgb(${triviaOptions[index].r}, ${triviaOptions[index].g}, ${triviaOptions[index].b})`,
+                    incorrectAccuracy,
+                    0
+                );
+            }
+
+            document.getElementById('btnNextTrivia').disabled = false;
+        }
+
+        // Add history log entry element
+        function addHistoryLog(targetRGB, userRGB, accuracy, points) {
+            const logContainer = document.getElementById('historyLog');
+
+            // Remove empty label
+            const emptyEl = logContainer.querySelector('.empty-history');
+            if (emptyEl) {
+                logContainer.innerHTML = '';
+            }
+
+            const item = document.createElement('div');
+            item.className = 'history-item';
+
+            let accuracyClass = 'accuracy-low';
+            if (accuracy >= 94) {
+                accuracyClass = 'accuracy-high';
+            } else if (accuracy >= 70) {
+                accuracyClass = 'accuracy-mid';
+            }
+
+            item.innerHTML = `
+                <div class="history-swatches">
+                    <div class="history-swatch" style="background-color: ${targetRGB};"></div>
+                    <div class="history-swatch" style="background-color: ${userRGB};" title="Tebakan Anda: ${userRGB}"></div>
+                    <div class="history-label">Level ${level}</div>
+                </div>
+                <div class="history-details">
+                    <div><strong>Tebakan:</strong> ${userRGB.replace(/\s+/g, '')}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="history-accuracy ${accuracyClass}">${accuracy.toFixed(1)}%</span>
+                    <span style="font-weight: 700; color: ${points > 0 ? '#34d399' : '#f87171'}">${points > 0 ? '+' + points : '0'} Pts</span>
+                </div>
+            `;
+
+            // Insert as first item (latest first)
+            logContainer.insertBefore(item, logContainer.firstChild);
+        }
+
+        // --- Go To Next Level ---
+        function nextLevel() {
+            playSound('click');
+            level++;
+            document.getElementById('level').textContent = level;
+            clearFeedback();
+            generateLevelChallenge();
+        }
+
+        // --- Information & Educational Modal ---
+        const modal = document.getElementById('infoModal');
+
+        function openModal() {
+            playSound('click');
+            modal.style.display = 'flex';
+            updateSandbox();
+        }
+
+        function closeModal() {
+            playSound('click');
+            modal.style.display = 'none';
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Interactive sandbox mixer inside the educational modal
+        function updateSandbox() {
+            const rChecked = document.getElementById('sandRed').checked;
+            const gChecked = document.getElementById('sandGreen').checked;
+            const bChecked = document.getElementById('sandBlue').checked;
+
+            const r = rChecked ? 255 : 0;
+            const g = gChecked ? 255 : 0;
+            const b = bChecked ? 255 : 0;
+
+            document.getElementById('sandboxPreview').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Run game initialization
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+
+</html>
